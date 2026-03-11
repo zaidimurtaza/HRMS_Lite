@@ -95,15 +95,25 @@ npm run dev
 
 **Employee Management:**
 - POST `/api/employees/` - Create employee (auto-generates EMP001, EMP002...)
-- GET `/api/employees/` - List all employees
+- GET `/api/employees/` - List all employees with search and pagination
 - GET `/api/employees/{id}` - Get specific employee
+- PATCH `/api/employees/{id}` - Update employee details (name, email, department)
 - DELETE `/api/employees/{id}` - Delete employee
 
 **Attendance Management:**
-- POST `/api/attendance/` - Mark attendance
+- POST `/api/attendance/` - Mark attendance (single or bulk)
 - GET `/api/attendance/` - List all records
+- GET `/api/attendance/date/{date}` - Get attendance for specific date
 - GET `/api/attendance/employee/{id}` - Get employee attendance
-- GET `/api/attendance/summary` - Attendance summary (BONUS)
+- GET `/api/attendance/summary` - Attendance summary with statistics
+
+**Advanced Features:**
+- Server-side pagination for employees
+- Search employees by name, email, or ID
+- Bulk attendance marking
+- Date range filtering for attendance records
+- Export functionality (Excel/CSV)
+- Auto-ping scheduler to prevent backend sleep
 
 **Validations:**
 - Email format validation
@@ -121,39 +131,47 @@ npm run dev
 
 **Employee Management UI:**
 - Add employee form with validation
-- Grid view of all employees
+- Professional table view with pagination
+- Search employees (debounced)
+- Edit employee (inline modal)
 - Delete employee with confirmation
+- Export to Excel/CSV
 - Empty state handling
 - Error messaging
 
 **Attendance Management UI:**
-- Tab-based navigation (Mark | Records | Summary)
-- Mark attendance form
-- Attendance records table
-- Attendance summary cards (BONUS)
-- Date picker
+- Sidebar navigation (Employees | Mark Attendance | Records | Summary)
+- Mark attendance inline for selected date
+- Search employees in attendance marking
+- Attendance records table with filters
+- Date range filtering (Today, This Week, This Month, Last Month, This Year)
+- Attendance summary with statistics and progress bars
+- Export attendance records (Excel/CSV)
 - Status badges (Present/Absent)
 
 **UI/UX:**
-- Clean, professional design
+- Professional SaaS-like design
+- Sidebar navigation
+- Table-based layouts
 - Responsive layout (mobile-friendly)
 - Loading states
 - Empty states
-- Error handling
+- Error handling with toast notifications
 - Smooth animations
-- Modern color scheme
-- Custom fonts (Outfit & Manrope)
+- Search with debouncing (500ms)
+- Modern color scheme (light theme)
 
 ---
 
 ## Design Highlights
 
-- **Modern Professional Look**: Clean blue palette, card-based layout
-- **Typography**: Outfit for headings, Manrope for body text
+- **Modern Professional Look**: Clean slate palette, table-based layout
+- **Typography**: System fonts for performance
 - **Responsive**: Works on desktop, tablet, and mobile
-- **Animations**: Smooth transitions, hover effects, slide-in forms
+- **Icons**: Lucide React for consistent iconography
 - **Status Indicators**: Color-coded badges for attendance status
 - **Empty States**: Friendly messages when no data
+- **Performance**: Debounced search, pagination, efficient API calls
 
 ---
 
@@ -177,8 +195,14 @@ npm run dev
 - Error states
 
 ### Bonus Features
-- Attendance summary with total present days
-- Dashboard-style summary cards
+- Attendance summary with total present days and attendance rate
+- Dashboard-style summary with progress bars
+- Server-side pagination
+- Search functionality with debouncing
+- Export to Excel/CSV
+- Date range filtering
+- Bulk attendance marking
+- Employee update functionality
 
 ---
 
@@ -218,12 +242,13 @@ npm run dev
 
 | Layer | Technology |
 |-------|------------|
-| **Frontend** | React 19, Vite |
-| **Backend** | FastAPI (Python) |
-| **Database** | PostgreSQL |
-| **Styling** | Custom CSS |
+| **Frontend** | React 19, Vite, React Router |
+| **Backend** | FastAPI (Python), APScheduler |
+| **Database** | PostgreSQL with connection pooling |
+| **Styling** | Tailwind CSS v4 |
 | **API** | REST |
-| **Fonts** | Outfit, Manrope |
+| **Icons** | Lucide React |
+| **Export** | xlsx, file-saver |
 
 ---
 
@@ -277,12 +302,15 @@ attendance
 ## Key Design Decisions
 
 1. **Auto-generated Employee IDs**: Using PostgreSQL generated columns
-2. **Simple API Service**: Clean fetch-based API client
-3. **Tab-based Navigation**: Easy switching between features
-4. **Card-based UI**: Modern, scannable layout
+2. **Simple API Service**: Clean fetch-based API client with error handling
+3. **Sidebar Navigation**: Professional SaaS-like navigation
+4. **Table-based UI**: Modern, data-dense layout with pagination
 5. **Upsert Attendance**: Can update attendance for same day
-6. **Connection Pooling**: Efficient database connections
+6. **Connection Pooling**: Efficient database connections with SimpleConnectionPool
 7. **No Authentication**: As per assignment requirements
+8. **Debounced Search**: 500ms debounce for optimal UX
+9. **Client-side Filtering**: Fast filtering for attendance records
+10. **APScheduler**: Auto-ping to prevent Render free tier sleep
 
 ---
 
