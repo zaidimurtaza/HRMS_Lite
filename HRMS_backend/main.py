@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from logging_config import setup_logging
 from app.database.postgres import init_pool, close_pool
 from app.routes import employees, attendance
+from scheduler import start_scheduler, shutdown_scheduler
 
 setup_logging()
 
@@ -28,13 +29,15 @@ app.include_router(attendance.router)
 
 @app.on_event("startup")
 def startup():
-    """Initialize database connection pool on startup"""
+    """Initialize database connection pool and scheduler on startup"""
     init_pool(minconn=5, maxconn=20)
+    start_scheduler()
 
 
 @app.on_event("shutdown")
 def shutdown():
-    """Close database connection pool on shutdown"""
+    """Close database connection pool and scheduler on shutdown"""
+    shutdown_scheduler()
     close_pool()
 
 
@@ -44,6 +47,7 @@ def root():
     return {
         "message": "HRMS Lite API",
         "version": "1.0.0",
+        "status": "running",
         "docs": "/docs"
     }
 
@@ -52,3 +56,4 @@ def root():
 def health():
     """Health check endpoint"""
     return {"status": "healthy"}
+

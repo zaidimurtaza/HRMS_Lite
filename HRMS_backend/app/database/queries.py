@@ -30,6 +30,42 @@ def get_all_employees():
     return employees
 
 
+def get_employees_paginated(search=None, page=1, limit=10):
+    """Get employees with search and pagination"""
+    offset = (page - 1) * limit
+    
+    # Build WHERE clause for search
+    where_clause = ""
+    params = []
+    if search:
+        where_clause = """
+            WHERE full_name ILIKE %s 
+            OR email ILIKE %s 
+            OR employee_id ILIKE %s
+        """
+        search_pattern = f"%{search}%"
+        params = [search_pattern, search_pattern, search_pattern]
+    
+    # Get total count
+    count_query = f"SELECT COUNT(*) as count FROM employees {where_clause}"
+    count_result = execute_query(count_query, params if params else None, fetch_one=True)
+    total = count_result['count']
+    
+    # Get paginated data
+    data_query = f"""
+        SELECT id, employee_id, full_name, email, department, created_at
+        FROM employees
+        {where_clause}
+        ORDER BY id DESC
+        LIMIT %s OFFSET %s
+    """
+    data_params = params + [limit, offset] if params else [limit, offset]
+    employees = execute_query(data_query, data_params)
+    
+    logger.info(f"Retrieved {len(employees)} of {total} employees (page {page})")
+    return employees, total
+
+
 def get_employee_by_id(employee_id):
     """Get employee by employee_id"""
     query = """

@@ -53,3 +53,11 @@ class AttendanceSummary(BaseModel):
     total_absent: int
     total_days: int
 
+
+class PaginatedEmployeeResponse(BaseModel):
+    data: list[EmployeeResponse]
+    total: int
+    page: int
+    limit: int
+    total_pages: int
+

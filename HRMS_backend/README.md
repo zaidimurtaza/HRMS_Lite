@@ -13,14 +13,17 @@ A lightweight Human Resource Management System backend built with FastAPI and Po
 
 ### Employee Management
 - Add new employees (auto-generated Employee ID)
-- View all employees
+- View all employees with search and pagination
 - Delete employees
+- Export employee data (Excel/CSV)
 
 ### Attendance Management
 - Mark daily attendance (Present/Absent)
+- Bulk attendance marking
 - View all attendance records
 - View attendance by employee
 - Attendance summary with statistics
+- Filter attendance by date
 
 ## Project Structure
 

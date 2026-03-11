@@ -3,7 +3,7 @@ Employee management routes
 """
 
 from fastapi import APIRouter, HTTPException, status
-from app.models import EmployeeCreate, EmployeeResponse
+from app.models import EmployeeCreate, EmployeeResponse, PaginatedEmployeeResponse
 from app.database.queries import (
     create_employee,
     get_all_employees,
@@ -53,16 +53,30 @@ def add_employee(employee: EmployeeCreate):
         )
 
 
-@router.get("/", response_model=list[EmployeeResponse])
-def list_employees():
+@router.get("/", response_model=PaginatedEmployeeResponse)
+def list_employees(
+    search: str = None,
+    page: int = 1,
+    limit: int = 10
+):
     """
-    Get all employees
+    Get all employees with optional search and pagination
     
-    Returns a list of all employees in the system
+    - **search**: Search by name, email, or employee ID
+    - **page**: Page number (default: 1)
+    - **limit**: Items per page (default: 10, max: 100)
     """
     try:
-        employees = get_all_employees()
-        return employees
+        from app.database.queries import get_employees_paginated
+        employees, total = get_employees_paginated(search, page, limit)
+        
+        return {
+            "data": employees,
+            "total": total,
+            "page": page,
+            "limit": limit,
+            "total_pages": (total + limit - 1) // limit
+        }
     except Exception as e:
         logger.error(f"Error listing employees: {e}")
         raise HTTPException(

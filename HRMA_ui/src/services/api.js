@@ -20,8 +20,9 @@ const handleResponse = async (response) => {
 };
 
 export const employeeAPI = {
-  getAll: async () => {
-    const response = await fetch(`${API_URL}/api/employees/`);
+  getAll: async (params = {}) => {
+    const searchParams = new URLSearchParams(params);
+    const response = await fetch(`${API_URL}/api/employees/?${searchParams}`);
     return handleResponse(response);
   },
 
