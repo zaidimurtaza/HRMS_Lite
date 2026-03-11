@@ -325,15 +325,6 @@ attendance
 - Responsive design
 - Bonus features (summary)
 
-## Next Steps
-
-1. **Deploy Backend** to Railway/Render
-2. **Deploy Frontend** to Vercel/Netlify
-3. **Update Frontend .env** with backend URL
-4. **Test Live Application**
-5. **Create GitHub Repository**
-6. **Submit URLs**
-
 ---
 
 ## Documentation
