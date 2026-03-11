@@ -35,6 +35,15 @@ export const employeeAPI = {
     return handleResponse(response);
   },
 
+  update: async (employeeId, employee) => {
+    const response = await fetch(`${API_URL}/api/employees/${employeeId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(employee)
+    });
+    return handleResponse(response);
+  },
+
   delete: async (employeeId) => {
     const response = await fetch(`${API_URL}/api/employees/${employeeId}`, {
       method: 'DELETE'
