@@ -344,6 +344,5 @@ attendance
 
 ---
 
-**Status**: READY FOR DEPLOYMENT
+**Status**: READY 
 
-The application is fully functional, well-structured, and meets all assignment requirements. Deploy and submit!
