@@ -76,6 +76,41 @@ def get_employee_by_id(employee_id):
     return execute_query(query, (employee_id,), fetch_one=True)
 
 
+def update_employee(employee_id, full_name=None, email=None, department=None):
+    """Update employee details"""
+    updates = []
+    params = []
+    
+    if full_name is not None:
+        updates.append("full_name = %s")
+        params.append(full_name)
+    
+    if email is not None:
+        updates.append("email = %s")
+        params.append(email)
+    
+    if department is not None:
+        updates.append("department = %s")
+        params.append(department)
+    
+    if not updates:
+        return None
+    
+    updates.append("updated_at = CURRENT_TIMESTAMP")
+    params.append(employee_id)
+    
+    query = f"""
+        UPDATE employees
+        SET {', '.join(updates)}
+        WHERE employee_id = %s
+        RETURNING id, employee_id, full_name, email, department, created_at
+    """
+    
+    result = execute_query(query, params, fetch_one=True, commit=True)
+    logger.info(f"Updated employee: {employee_id}")
+    return result
+
+
 def check_email_exists(email):
     """Check if email already exists"""
     query = "SELECT COUNT(*) as count FROM employees WHERE email = %s"

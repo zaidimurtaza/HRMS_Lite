@@ -16,6 +16,12 @@ class EmployeeCreate(BaseModel):
     department: str
 
 
+class EmployeeUpdate(BaseModel):
+    full_name: str | None = None
+    email: EmailStr | None = None
+    department: str | None = None
+
+
 class EmployeeResponse(BaseModel):
     id: int
     employee_id: str

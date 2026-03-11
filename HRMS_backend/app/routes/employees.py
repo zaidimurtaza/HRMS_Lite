@@ -3,13 +3,15 @@ Employee management routes
 """
 
 from fastapi import APIRouter, HTTPException, status
-from app.models import EmployeeCreate, EmployeeResponse, PaginatedEmployeeResponse
+from app.models import EmployeeCreate, EmployeeUpdate, EmployeeResponse, PaginatedEmployeeResponse
 from app.database.queries import (
     create_employee,
     get_all_employees,
     get_employee_by_id,
+    get_employees_paginated,
     check_email_exists,
-    delete_employee
+    delete_employee,
+    update_employee
 )
 import logging
 
@@ -109,6 +111,59 @@ def get_employee(employee_id: str):
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to retrieve employee"
+        )
+
+
+@router.patch("/{employee_id}", response_model=EmployeeResponse)
+def edit_employee(employee_id: str, employee: EmployeeUpdate):
+    """
+    Update employee details
+    
+    - **employee_id**: Employee ID (e.g., EMP001)
+    - **full_name**: New full name (optional)
+    - **email**: New email address (optional)
+    - **department**: New department (optional)
+    """
+    try:
+        # Check if employee exists
+        existing = get_employee_by_id(employee_id)
+        if not existing:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Employee '{employee_id}' not found"
+            )
+        
+        # Check if email is being updated and if it's already taken
+        if employee.email and employee.email != existing['email']:
+            if check_email_exists(employee.email):
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Email address already registered"
+                )
+        
+        # Update employee
+        updated = update_employee(
+            employee_id=employee_id,
+            full_name=employee.full_name,
+            email=employee.email,
+            department=employee.department
+        )
+        
+        if not updated:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="No fields to update"
+            )
+        
+        return updated
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating employee: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to update employee"
         )
 
 
